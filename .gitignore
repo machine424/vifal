@@ -1,0 +1,17 @@
+.dev/
+
+# Build output
+vifal
+
+# macOS
+.DS_Store
+
+# Secrets
+.env
+
+# Go
+*.test
+*.out
+go.work
+go.work.sum
+vendor/
