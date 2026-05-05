@@ -140,11 +140,14 @@ content=$(fuse cat "$NGINX_FS/proc/version")
 kversion=$(kexec cat /proc/version)
 [ "$content" = "$kversion" ]
 
+# Capture first to avoid SIGPIPE with pipefail.
 log_step "procfs cpuinfo is readable and non-empty"
-fuse cat "$NGINX_FS/proc/cpuinfo" | grep -qi "processor\|bogomips\|model"
+content=$(fuse cat "$NGINX_FS/proc/cpuinfo")
+echo "$content" | grep -qi "processor\|bogomips\|model"
 
 log_step "procfs meminfo is readable and non-empty"
-fuse cat "$NGINX_FS/proc/meminfo" | grep -qi "memtotal\|memfree"
+content=$(fuse cat "$NGINX_FS/proc/meminfo")
+echo "$content" | grep -qi "memtotal\|memfree"
 
 log_step "file that grew since last stat returns new content"
 GROW="$NGINX_FS/tmp/grow-test"
