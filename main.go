@@ -139,6 +139,9 @@ Flags:
 	}
 
 	fuseMountpoint = pflag.Arg(0)
+	if isMountpoint(fuseMountpoint) {
+		logger.Fatalf("%s is already a mountpoint", fuseMountpoint)
+	}
 	server, err := fs.Mount(fuseMountpoint, root, &fs.Options{
 		MountOptions: fuse.MountOptions{
 			Name:          *fsName,
@@ -275,6 +278,20 @@ Flags:
 	} else if unmountErr != nil {
 		os.Exit(1)
 	}
+}
+
+// isMountpoint reports whether path is already a mountpoint by comparing
+// device IDs with its parent (different device = mount boundary).
+// TODO: This should probably be more cleanly handled by go-fuse.
+func isMountpoint(path string) bool {
+	var st, pst syscall.Stat_t
+	if err := syscall.Stat(path, &st); err != nil {
+		return false
+	}
+	if err := syscall.Stat(filepath.Dir(path), &pst); err != nil {
+		return false
+	}
+	return st.Dev != pst.Dev
 }
 
 // doUnmount tries platform-appropriate unmount commands in order.

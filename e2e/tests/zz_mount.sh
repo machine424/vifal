@@ -41,10 +41,8 @@ check_clean_unmount "$MOUNT"
 
 remount sigint
 
-if [ "$UNAME_S" != "Darwin" ]; then
-    log_step "double mount fails"
-    must_fail "$VIFAL" $DEBUG "$MOUNT"
-fi
+log_step "double mount fails"
+must_fail "$VIFAL" $DEBUG "$MOUNT"
 
 log_step "SIGINT unmount"
 kill -INT "$VIFAL_PID"
