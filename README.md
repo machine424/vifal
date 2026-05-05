@@ -4,7 +4,7 @@ Read-only FUSE mount that exposes Kubernetes container filesystems locally.
 
 ```bash
 # uses the current kubeconfig context
-$ vifal /mnt/foo-cluster &
+$ vifal /mnt/foo-cluster 2>/tmp/vifal.log &
 
 $ ls /mnt/foo-cluster/
 default  kube-system  monitoring  apps
