@@ -1,6 +1,6 @@
 BINARY             = vifal
-GOLANGCI_LINT_VERSION = v2.11.4
-GO_LICENSES_VERSION   = v1.6.0
+GOLANGCI_LINT_VERSION = v2.12.1
+GO_LICENSES_VERSION   = v2.0.1
 GO_BUILD_FLAGS     ?=
 GO_LDFLAGS         ?= -s -w
 TIMEOUT_CMD        = timeout --foreground
@@ -46,7 +46,7 @@ shellcheck:
 
 # If this fails, run: go-licenses save ./... --save_path=LICENSES --ignore github.com/machine424/vifal
 licenses-check:
-	go install github.com/google/go-licenses@$(GO_LICENSES_VERSION)
+	go install github.com/google/go-licenses/v2@$(GO_LICENSES_VERSION)
 	go-licenses check ./...
 	rm -rf LICENSES.tmp
 	go-licenses save ./... --save_path=LICENSES.tmp --ignore github.com/machine424/vifal
