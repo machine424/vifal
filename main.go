@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"hash/fnv"
 	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -32,6 +33,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
 
+	"k8s.io/klog/v2"
 	"k8s.io/kubectl/pkg/scheme"
 )
 
@@ -92,7 +94,7 @@ func cmdMount() {
 	initKubeFlags()
 	kubeFlags.AddFlags(pflag.CommandLine)
 
-	debug := pflag.Bool("debug", false, "print debug data")
+	debug := pflag.Bool("debug", false, "enable verbose logging")
 	fsName := pflag.String("fsname", defaultFSName, "filesystem name")
 	cacheTTL := pflag.Duration("attr-ttl", attrTTL, "TTL for attribute and directory caches")
 
@@ -123,6 +125,12 @@ Flags:
 		pflag.PrintDefaults()
 	}
 	pflag.Parse()
+
+	if !*debug {
+		// Suppress client-go/klog output.
+		klog.SetSlogLogger(slog.New(slog.DiscardHandler))
+	}
+
 	logger = log.New(os.Stderr, *fsName+": ", log.LstdFlags|log.Lmsgprefix)
 
 	if pflag.NArg() != 1 {
