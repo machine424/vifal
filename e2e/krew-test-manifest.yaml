@@ -1,5 +1,5 @@
 # Static manifest for testing krew install locally (with --archive).
-# krew ignores uri/sha256 when --archive is provided.
+# The test script replaces SHA256SUM with the real checksum at runtime.
 apiVersion: krew.googlecontainertools.github.com/v1alpha2
 kind: Plugin
 metadata:
@@ -12,7 +12,7 @@ spec:
         os: linux
         arch: amd64
     uri: https://example.com/placeholder.tar.gz
-    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+    sha256: SHA256SUM
     bin: kubectl-vifal
   shortDescription: test
   description: test

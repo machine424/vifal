@@ -2,6 +2,8 @@
 
 # Build output
 vifal
+kubectl-vifal
+kubectl-vifal_*.tar.gz
 
 # macOS
 .DS_Store
