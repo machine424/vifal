@@ -1,10 +1,10 @@
-BINARY             = vifal
+BINARY             ?= vifal
 GOLANGCI_LINT_VERSION = v2.12.1
 GO_LICENSES_VERSION   = v2.0.1
 GO_BUILD_FLAGS     ?=
 GO_LDFLAGS         ?= -s -w
 TIMEOUT_CMD        = timeout --foreground
-.PHONY: build build-debug build-race clean test unit-test e2e-test e2e-test-go e2e-test-shell e2e-test-shell-debug e2e-test-shell-nocache lint shellcheck licenses-check
+.PHONY: build build-debug build-race release-archive clean test unit-test e2e-test e2e-test-go e2e-test-shell e2e-test-shell-debug e2e-test-shell-nocache lint shellcheck licenses-check
 
 build:
 	go build $(GO_BUILD_FLAGS) -ldflags="$(GO_LDFLAGS)" -o $(BINARY) .
@@ -14,6 +14,10 @@ build-debug:
 
 build-race:
 	$(MAKE) --no-print-directory build GO_BUILD_FLAGS=-race GO_LDFLAGS=
+
+release-archive:
+	$(MAKE) --no-print-directory build BINARY=kubectl-vifal
+	tar czf "kubectl-vifal_$(VERSION)_$(GOOS)_$(GOARCH).tar.gz" kubectl-vifal LICENSE LICENSES/
 
 test: unit-test e2e-test
 

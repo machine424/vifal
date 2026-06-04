@@ -1,0 +1,18 @@
+# Static manifest for testing krew install locally (with --archive).
+# krew ignores uri/sha256 when --archive is provided.
+apiVersion: krew.googlecontainertools.github.com/v1alpha2
+kind: Plugin
+metadata:
+  name: vifal
+spec:
+  version: v0.0.0-ci
+  platforms:
+  - selector:
+      matchLabels:
+        os: linux
+        arch: amd64
+    uri: https://example.com/placeholder.tar.gz
+    sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+    bin: kubectl-vifal
+  shortDescription: test
+  description: test

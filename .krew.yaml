@@ -1,0 +1,48 @@
+apiVersion: krew.googlecontainertools.github.com/v1alpha2
+kind: Plugin
+metadata:
+  name: vifal
+spec:
+  version: {{ .TagName }}
+  homepage: https://github.com/machine424/vifal
+  platforms:
+  - selector:
+      matchLabels:
+        os: linux
+        arch: amd64
+    {{addURIAndSha "https://github.com/machine424/vifal/releases/download/{{ .TagName }}/kubectl-vifal_{{ .TagName }}_linux_amd64.tar.gz" .TagName }}
+    bin: kubectl-vifal
+  - selector:
+      matchLabels:
+        os: linux
+        arch: arm64
+    {{addURIAndSha "https://github.com/machine424/vifal/releases/download/{{ .TagName }}/kubectl-vifal_{{ .TagName }}_linux_arm64.tar.gz" .TagName }}
+    bin: kubectl-vifal
+  - selector:
+      matchLabels:
+        os: darwin
+        arch: amd64
+    {{addURIAndSha "https://github.com/machine424/vifal/releases/download/{{ .TagName }}/kubectl-vifal_{{ .TagName }}_darwin_amd64.tar.gz" .TagName }}
+    bin: kubectl-vifal
+  - selector:
+      matchLabels:
+        os: darwin
+        arch: arm64
+    {{addURIAndSha "https://github.com/machine424/vifal/releases/download/{{ .TagName }}/kubectl-vifal_{{ .TagName }}_darwin_arm64.tar.gz" .TagName }}
+    bin: kubectl-vifal
+  shortDescription: exposing and unifying Kubernetes container filesystems locally
+  description: |
+    FUSE mount that exposes and unifies Kubernetes container filesystems locally.
+    Browse namespaces, pods, and containers as directories, read files, and diff
+    configs across pods using standard shell tools.
+  caveats: |
+    Requires FUSE:
+      - Linux: install fuse3
+      - macOS: install macFUSE (https://github.com/macfuse/macfuse)
+
+    Containers must have sh, stat, find, and dd available.
+
+    Usage:
+      kubectl vifal /mnt/my-cluster
+      ls /mnt/my-cluster/<namespace>/<pod>/<container>/
+      kubectl vifal unmount /mnt/my-cluster

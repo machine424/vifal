@@ -39,11 +39,20 @@ jobs:
           cache: true
       - name: Install FUSE
         run: sudo apt-get update && sudo apt-get install -y fuse3
+      - name: Install krew
+        run: |
+          cd "$(mktemp -d)"
+          curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/krew-linux_amd64.tar.gz"
+          tar zxf krew-linux_amd64.tar.gz
+          ./krew-linux_amd64 install krew
+          echo "${HOME}/.krew/bin" >> "$GITHUB_PATH"
       - uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0, kind v0.31.0, kubectl v1.35.0
         with:
           cluster_name: vifal-test
           node_image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
       - run: make e2e-test-shell
+        env:
+          VIFAL_E2E_KREW: "1"
       # With race detector and no attr caching.
       - run: FUSE_TIMEOUT=5 make e2e-test-shell-nocache
         env:
