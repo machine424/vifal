@@ -31,9 +31,13 @@ trap teardown EXIT
 setup
 
 log_step "build and install via krew"
+MANIFEST="$TEST_DIR/manifest.yaml"
+ARCHIVE="kubectl-vifal_v0.0.0-ci_linux_amd64.tar.gz"
 make -s release-archive VERSION=v0.0.0-ci GOOS=linux GOARCH=amd64
-kubectl krew install --manifest="$DIR/krew-test-manifest.yaml" --archive=kubectl-vifal_v0.0.0-ci_linux_amd64.tar.gz
-rm -f kubectl-vifal_v0.0.0-ci_linux_amd64.tar.gz kubectl-vifal
+# krew validates sha256 even with --archive, patch the placeholder in the manifest.
+sed "s/SHA256SUM/$(sha256sum "$ARCHIVE" | awk '{print $1}')/" "$DIR/krew-test-manifest.yaml" > "$MANIFEST"
+kubectl krew install --manifest="$MANIFEST" --archive="$ARCHIVE"
+rm -f "$ARCHIVE" kubectl-vifal
 
 log_step "mount"
 kubectl vifal --fsname "$VIFAL_SHELL_TEST" --attr-ttl "$CACHE_TTL" "$MOUNT" 2>"$LOGS/vifal.log" &
