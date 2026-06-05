@@ -40,6 +40,14 @@ Works on Linux and macOS.
 - Linux: install `fuse3`.
 - macOS: install [macFUSE](https://github.com/macfuse/macfuse/wiki/Getting-Started). The mount appears as a network volume, so your terminal may need [access to network volumes](https://github.com/macfuse/macfuse/issues/690#issuecomment-1527424231).
 
+Via [Krew](https://krew.sigs.k8s.io/) (kubectl plugin manager):
+
+```bash
+$ kubectl krew install vifal
+```
+
+Via `go install`:
+
 ```bash
 $ go install github.com/machine424/vifal@latest
 ```
