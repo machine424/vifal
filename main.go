@@ -29,6 +29,7 @@ import (
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 	listerscorev1 "k8s.io/client-go/listers/core/v1"
+	_ "k8s.io/client-go/plugin/pkg/client/auth"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/client-go/util/workqueue"
@@ -59,6 +60,16 @@ var (
 	statFieldCount = 15
 	statCmdSuffix  = "-maxdepth 1 -exec stat -c '%n\x1d%i\x1d%s\x1d%b\x1d%X\x1d%Y\x1d%Z\x1d%f\x1d%h\x1d%u\x1d%g\x1d%t\x1d%T\x1d%o\x1d%N' {} +"
 )
+
+// cmdName returns the user-facing command name: "kubectl vifal" when invoked
+// as a kubectl plugin, or the plain binary name otherwise.
+func cmdName() string {
+	bin := filepath.Base(os.Args[0])
+	if name, ok := strings.CutPrefix(bin, "kubectl-"); ok {
+		return fmt.Sprintf("kubectl %s", name)
+	}
+	return bin
+}
 
 func main() {
 	if len(os.Args) > 1 && os.Args[1] == subcmdUnmount {
@@ -98,7 +109,7 @@ func cmdMount() {
 	fsName := pflag.String("fsname", defaultFSName, "filesystem name")
 	cacheTTL := pflag.Duration("attr-ttl", attrTTL, "TTL for attribute and directory caches")
 
-	bin := filepath.Base(os.Args[0])
+	bin := cmdName()
 	pflag.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage: %[1]s [flags] MOUNTPOINT
        %[1]s %[2]s [--rm] [--force] MOUNTPOINT
@@ -244,7 +255,7 @@ func cmdUnmount(args []string) {
 	rm := f.Bool("rm", false, "remove the mountpoint directory even if unmount fails")
 	force := f.Bool("force", false, "force unmount even if busy (lazy unmount)")
 
-	bin := filepath.Base(os.Args[0])
+	bin := cmdName()
 	f.Usage = func() {
 		fmt.Fprintf(os.Stderr, `Usage: %[1]s %[2]s [--rm] [--force] MOUNTPOINT
 
